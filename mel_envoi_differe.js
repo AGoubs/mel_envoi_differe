@@ -1,4 +1,3 @@
-<?php
 /**
  * Plugin Mél Envoi différé
  *
@@ -19,8 +18,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-$labels = array();
-$labels['null'] = ' ';
-$labels['delayedsending'] = 'Envoi différé';
-$labels['buttontext'] = 'Remise différée';
-$labels['buttontitle'] = 'Remise différée';
+if (window.rcmail) {
+    if (rcmail.env.task == 'mail' && rcmail.env.action == 'compose') {
+        rcmail.enable_command('plugin.mel_envoi_differe', true);
+    };
+
+    rcmail.addEventListener('init', function (evt) {
+
+    });
+}
