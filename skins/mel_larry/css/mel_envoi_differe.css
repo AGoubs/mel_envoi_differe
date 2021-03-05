@@ -16,18 +16,32 @@
 	max-width: 125px;
 }
 
+
+#envoidiffere_date {
+    width: 140px;
+    margin-right: 10px;
+}
+
+#envoidiffere_time {
+    width: 110px;
+}
+
 /*Affichage de l'iframe*/
 body.envoidiffere {
 	background: #fff !important;
 	background: var(--main-content-bg-color) !important;
 }
 
+#submit_envoidiffere {
+    margin-top: 15px;
+}
+
 #envoidiffere-details .warning {
-    margin-top: 10px;
+    margin-top: 5px;
     padding: 10px 15px;
     border: 1px solid #d8cebc;
     background-color: #ffe1e0;
-    margin-bottom: 15px;
+    margin-bottom: 30px;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Mél Envoi différé
  *
@@ -25,5 +26,7 @@ $labels['buttontext'] = 'Remise différée';
 $labels['buttontitle'] = 'Remise différée';
 $labels['title'] = 'Remise différée de mon mail';
 $labels['date'] = 'Le : ';
-$labels['description'] = "Votre mail sera remis à la date et à l'horaire défini ci-dessous. \n Attention : il est en revanche impossible de modifier et annuler ce mail une fois envoyé.";
+$labels['time'] = 'A : ';
+$labels['description'] = "Votre mail sera remis à la date et à l'horaire défini ci-dessous.";
+$labels['description_warning'] = "Attention : il est en revanche impossible de modifier et annuler ce mail une fois envoyé.";
 $labels['save'] = 'Enregistrer';
