@@ -23,19 +23,7 @@
 class mel_envoi_differe extends rcube_plugin
 {
     /**
-     * Task courante pour le plugin
-     *
-     * @var string
-     */
-    public $task = 'mail';
-
-    /**
-     * RFC4155: mbox date format
-     */
-    const MBOX_DATE_FORMAT = 'D M d H:i:s Y';
-
-    /**
-     * Méthode d'initialisation du plugin mel_archivage
+     * Méthode d'initialisation du plugin mel_envoi_differe
      */
     function init()
     {
@@ -43,7 +31,7 @@ class mel_envoi_differe extends rcube_plugin
 
         $this->load_config();
 
-        if ($rcmail->task == 'mail' && $rcmail->action == 'compose') {
+        if ($rcmail->task == 'mail' && ($rcmail->action == 'compose' || $rcmail->action == 'plugin.mel_envoi_differe')) {
             if ($rcmail->config->get('ismobile', false)) {
                 $skin_path = 'skins/mel_larry_mobile';
             } else {
@@ -53,18 +41,18 @@ class mel_envoi_differe extends rcube_plugin
             $this->include_script('mel_envoi_differe.js');
             $this->add_texts('localization/', true);
 
-            $this->register_action('plugin.mel_envoi_differe', array($this, 'request_action'));
-
             $this->add_button(array(
                 'type'     => 'link',
                 'label'    => 'buttontext',
-                'command'  => 'plugin.mel_envoi_differe',
+                'command'  => 'display_mel_envoi_differe',
                 'class'    => 'button mel_envoi_differe disabled',
                 'id'       => 'mel_envoi_differe',
                 'classact' => 'button mel_envoi_differe',
                 'title'    => 'buttontitle',
                 'domain'   => 'mel_envoi_differe'
             ), 'toolbar');
+
+            $this->register_action('plugin.mel_envoi_differe', array($this, 'request_action'));
         }
     }
 
@@ -74,7 +62,6 @@ class mel_envoi_differe extends rcube_plugin
     public function request_action()
     {
         $rcmail = rcmail::get_instance();
-    $rcmail->output->send();
-
+        $rcmail->output->send('mel_envoi_differe.mel_envoi_differe');
     }
 }

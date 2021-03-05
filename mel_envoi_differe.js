@@ -19,11 +19,39 @@
  */
 
 if (window.rcmail) {
-    if (rcmail.env.task == 'mail' && rcmail.env.action == 'compose') {
-        rcmail.enable_command('plugin.mel_envoi_differe', true);
-    };
-
     rcmail.addEventListener('init', function (evt) {
+        if (rcmail.env.task == 'mail' && rcmail.env.action == 'compose') {
+            rcmail.enable_command('display_mel_envoi_differe', true);
+        };
+
+        $('#envoidiffere_date').datepicker({ maxDate: 0, dateFormat: 'dd/mm/yy HH:MM' })
+            .change(function () {
+                changeInput(this.value);
+            });
 
     });
 }
+
+rcube_webmail.prototype.display_mel_envoi_differe = function () {
+    var frame = $('<iframe>').attr('id', 'envoidiffereframe')
+        .attr('src', rcmail.url('mail/plugin.mel_envoi_differe') + '&_framed=1')
+        .attr('frameborder', '0')
+        .appendTo(document.body);
+
+    var buttons = {};
+
+    frame.dialog({
+        modal: true,
+        resizable: false,
+        closeOnEscape: true,
+        title: '',
+        closeText: rcmail.get_label('close'),
+        close: function () {
+            frame.dialog('destroy').remove();
+        },
+        buttons: buttons,
+        width: 400,
+        height: 435,
+        rcmail: rcmail
+    }).width(380);
+};
