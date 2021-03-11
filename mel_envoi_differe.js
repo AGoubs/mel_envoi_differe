@@ -94,10 +94,10 @@ var time_autocomplete_list = function (p, callback) {
         min = 0,
         hour = Math.floor(Math.ceil(minutes / step) * step / 60);
 
-   
+
 
     // list 5min steps 24 hours
-    for (h =  0; h < 24; h++) {
+    for (h = 0; h < 24; h++) {
         while (min < 60) {
             result.push(time_autocomplete_format(h, min, start));
             min += step;
@@ -176,13 +176,26 @@ if (window.rcmail) {
                 changeInput(this.value);
             });
 
-
         init_time_autocomplete($('#envoidiffere_time'), {
             container: '#envoidiffere-details'
         });
 
+        $('#form_envoidiffere').submit(function (event) {
+            event.preventDefault();
+            let date = ($('#envoidiffere_date').val()).split("/");
+            let day = date[0];
+            let month = date[1];
+            let year = date[2];
 
+            let time = ($('#envoidiffere_time').val()).split(":");
+            let hour = time[0];
+            let min = time[1];
 
+            let DateJs = new Date(year, month - 1, day, hour, min);
+            let timestamp = DateJs.getTime();
+            $(window.parent.rcmail.gui_objects.messageform).append('<input type="hidden" name="envoi_differe" value="'+timestamp+'" /> ')
+            rcmail.command('send', '', this, event);
+        });
     });
 }
 
