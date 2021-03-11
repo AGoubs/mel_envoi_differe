@@ -17,6 +17,8 @@
 }
 
 
+
+
 #envoidiffere_date {
     width: 140px;
     margin-right: 10px;
@@ -32,7 +34,7 @@ body.envoidiffere {
 	background: var(--main-content-bg-color) !important;
 }
 
-#submit_envoidiffere {
+#submit_envoidiffere, #cancel_envoidiffere {
     margin-top: 15px;
 }
 

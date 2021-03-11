@@ -211,6 +211,23 @@ if (window.rcmail) {
             parent.$('#envoidiffereframe').dialog('close');
         });
     });
+
+    $(document)
+    .on({
+      click: function (e) {
+        if ($(window.parent.rcmail.gui_objects.messageform).find('input[name ="envoi_differe"]').length) {
+            parent.$('#envoi_differe').remove();
+        }
+        
+        parent.$('#mel_envoi_differe').text("Remise différée");
+        parent.$('#mel_envoi_differe').css({ width: '125px' });
+        
+        parent.$('#envoidiffereframe').dialog('close');
+
+        
+      }
+    }, "#cancel_envoidiffere");
+
 }
 
 rcube_webmail.prototype.display_mel_envoi_differe = function () {
