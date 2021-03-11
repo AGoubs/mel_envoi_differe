@@ -165,6 +165,10 @@ var init_time_autocomplete = function (elem, props) {
     };
 };
 
+
+
+
+
 if (window.rcmail) {
     rcmail.addEventListener('init', function (evt) {
         if (rcmail.env.task == 'mail' && rcmail.env.action == 'compose') {
@@ -193,8 +197,18 @@ if (window.rcmail) {
 
             let DateJs = new Date(year, month - 1, day, hour, min);
             let timestamp = DateJs.getTime();
-            $(window.parent.rcmail.gui_objects.messageform).append('<input type="hidden" name="envoi_differe" value="'+timestamp+'" /> ')
-            rcmail.command('send', '', this, event);
+
+            if (!$(window.parent.rcmail.gui_objects.messageform).find('input[name ="envoi_differe"]').length) {
+                $(window.parent.rcmail.gui_objects.messageform).append('<input id="envoi_differe" type="hidden" name="envoi_differe" value="' + timestamp + '" /> ')
+            }
+            else {
+                parent.$('#envoi_differe').val(timestamp);
+            }
+
+            parent.$('#mel_envoi_differe').text($('#envoidiffere_date').val() + ' ' + $('#envoidiffere_time').val());
+            parent.$('#mel_envoi_differe').css({ width: '150px' });
+
+            parent.$('#envoidiffereframe').dialog('close');
         });
     });
 }
@@ -205,7 +219,7 @@ rcube_webmail.prototype.display_mel_envoi_differe = function () {
         .attr('frameborder', '0')
         .appendTo(document.body);
 
-    var buttons = {};
+    var buttons = {}
 
     frame.dialog({
         modal: true,
@@ -222,4 +236,3 @@ rcube_webmail.prototype.display_mel_envoi_differe = function () {
         rcmail: rcmail
     }).width(380);
 };
-

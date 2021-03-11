@@ -69,7 +69,7 @@ class mel_envoi_differe extends rcube_plugin
     }
 
     /**
-     * Add timestamps in header
+     * Add timestamps and modify date in header
      */
     function message_before_send($args)
     {
