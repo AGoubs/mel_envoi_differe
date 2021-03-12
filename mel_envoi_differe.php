@@ -31,7 +31,7 @@ class mel_envoi_differe extends rcube_plugin
 
         $this->load_config();
 
-        if ($rcmail->task == 'mail' && ($rcmail->action == 'compose' || $rcmail->action == 'plugin.mel_envoi_differe' || $rcmail->action == 'send')) {
+        if ($rcmail->task == 'mail' && ($rcmail->action == 'compose' || $rcmail->action == 'plugin.mel_envoi_differe')) {
             if ($rcmail->config->get('ismobile', false)) {
                 $skin_path = 'skins/mel_larry_mobile';
             } else {
@@ -53,9 +53,9 @@ class mel_envoi_differe extends rcube_plugin
             ), 'toolbar');
 
             $this->register_action('plugin.mel_envoi_differe', array($this, 'request_action'));
-            if ($rcmail->action == 'send') {
-                $this->add_hook('message_before_send', array($this, 'message_before_send'));
-            }
+        } 
+        else if ($rcmail->task == 'mail' && $rcmail->action == 'send') {
+            $this->add_hook('message_before_send', array($this, 'message_before_send'));
         }
     }
 
