@@ -31,7 +31,7 @@ class mel_envoi_differe extends rcube_plugin
 
         $this->load_config();
 
-        if ($rcmail->task == 'mail' && ($rcmail->action == 'compose' || $rcmail->action == 'plugin.mel_envoi_differe')) {
+        if ($rcmail->task == 'mail' && $rcmail->action == 'compose' ) {
             if ($rcmail->config->get('ismobile', false)) {
                 $skin_path = 'skins/mel_larry_mobile';
             } else {
@@ -53,8 +53,8 @@ class mel_envoi_differe extends rcube_plugin
             ), 'toolbar');
 
             $this->register_action('plugin.mel_envoi_differe', array($this, 'request_action'));
-        } 
-        else if ($rcmail->task == 'mail' && $rcmail->action == 'send') {
+            $rcmail->output->set_env('timezone', $rcmail->config->get('timezone', null));
+        } else if ($rcmail->task == 'mail' && $rcmail->action == 'send') {
             $this->add_hook('message_before_send', array($this, 'message_before_send'));
         }
     }
@@ -74,14 +74,20 @@ class mel_envoi_differe extends rcube_plugin
     function message_before_send($args)
     {
         $timestamp = rcube_utils::get_input_value('envoi_differe', rcube_utils::INPUT_GPC);
+
         if ($timestamp) {
             $rcmail = rcmail::get_instance();
+            $timestamp = $timestamp / 1000;
+            // On récupère la timezone de l'utilisateur
             $timezone = $rcmail->config->get('timezone', null);
-            $date = new DateTime();
-            $date->setTimezone(new DateTimeZone($timezone));
-            $date->setTimestamp($timestamp / 1000);
+
+            $date = new DateTime("@$timestamp");
+            $date->setTimeZone(new DateTimeZone($timezone));
             $dateFormat = $date->format('r');
-            $args['message']->headers(array('X-DateEnvoiDiffere' => $timestamp, 'Date' => $dateFormat), true);
+            $date->setTimeZone(new DateTimeZone('UTC'));
+            $dateTimestamp = $date->getTimestamp();
+
+            $args['message']->headers(array('X-DateEnvoiDiffere' => $dateTimestamp, 'Date' => $dateFormat), true);
             return $args;
         }
     }
