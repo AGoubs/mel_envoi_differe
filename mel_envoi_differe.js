@@ -194,7 +194,7 @@ rcube_webmail.prototype.display_mel_envoi_differe = function () {
         date = dateHeure[0];
         heure = dateHeure[1];
     }
-    let html = '<h1 class="boxtitle">' + rcmail.gettext('title', 'mel_envoi_differe') + '</h1><div id="envoidiffere-details" class="boxcontent"><form name="valide" action="" class="propform" id="form_envoidiffere"><fieldset><div class="warning">' + rcmail.gettext('description', 'mel_envoi_differe') + '<br>' + rcmail.gettext('description_warning', 'mel_envoi_differe') + '</div><div><label for="envoidiffere_date">' + rcmail.gettext('date', 'mel_envoi_differe') + '</label><input type="text" name="envoidiffere_date" id="envoidiffere_date" value="' + date + '" required>' + rcmail.gettext('time', 'mel_envoi_differe') + '<input type="text" name="envoidiffere_time" id="envoidiffere_time" value="' + heure + '" required></div><div id="error_message"></div><div id="info_message">Cette remise différée est une étape préalable avant une véritable fonction d\'envoi différé</div></fieldset></form></div>'
+    let html = '<h1 class="boxtitle">' + rcmail.gettext('title', 'mel_envoi_differe') + '</h1><div id="envoidiffere-details" class="boxcontent"><form name="valide" action="" class="propform" id="form_envoidiffere"><fieldset><div class="warning">' + rcmail.gettext('description', 'mel_envoi_differe') + '<br>' + rcmail.gettext('description_warning', 'mel_envoi_differe') + '</div><div class="margin"><label for="envoidiffere_date">' + rcmail.gettext('date', 'mel_envoi_differe') + '</label><input type="text" name="envoidiffere_date" id="envoidiffere_date" value="' + date + '" required>' + rcmail.gettext('time', 'mel_envoi_differe') + '<input type="text" name="envoidiffere_time" id="envoidiffere_time" value="' + heure + '" required></div><div id="error_message"></div><div id="info_message">' + rcmail.gettext('description_info', 'mel_envoi_differe') + '</div></fieldset></form></div>'
 
     buttons = [{
         text: rcmail.gettext('save', 'mel_envoi_differe'),
@@ -214,17 +214,24 @@ rcube_webmail.prototype.display_mel_envoi_differe = function () {
                 let DateJs = new Date(year, month - 1, day, hour, min);
                 let timestamp = DateJs.getTime();
 
-                if (!$(window.parent.rcmail.gui_objects.messageform).find('input[name="envoi_differe"]').length) {
-                    $(window.parent.rcmail.gui_objects.messageform).append('<input id="envoi_differe" type="hidden" name="envoi_differe" value="' + timestamp + '" /> ')
+                //On vérifie que le timestamp courant n'est pas inférieur à la date choisi
+                if (timestamp > new Date().getTime()) {
+                    if (!$(window.parent.rcmail.gui_objects.messageform).find('input[name="envoi_differe"]').length) {
+                        $(window.parent.rcmail.gui_objects.messageform).append('<input id="envoi_differe" type="hidden" name="envoi_differe" value="' + timestamp + '" /> ')
+                    }
+                    else {
+                        parent.$('#envoi_differe').val(timestamp);
+                    }
+
+                    parent.$('#mel_envoi_differe').text($('#envoidiffere_date').val() + ' ' + $('#envoidiffere_time').val());
+                    parent.$('#mel_envoi_differe').css({ width: '150px' });
+
+                    $('.ui-dialog-content').dialog('destroy');
                 }
                 else {
-                    parent.$('#envoi_differe').val(timestamp);
+                    dateInférieurDialog();
                 }
 
-                parent.$('#mel_envoi_differe').text($('#envoidiffere_date').val() + ' ' + $('#envoidiffere_time').val());
-                parent.$('#mel_envoi_differe').css({ width: '150px' });
-
-                $('.ui-dialog-content').dialog('destroy');
             }
             else {
                 $('#error_message').text("Merci de remplir les champs ci-dessus")
@@ -239,7 +246,7 @@ rcube_webmail.prototype.display_mel_envoi_differe = function () {
             }
             parent.$('#mel_envoi_differe').text("Remise différée");
             parent.$('#mel_envoi_differe').css({ width: '125px' });
-            $('.ui-dialog-content').dialog('destroy');
+            $(this).dialog('destroy');
         }
     }];
 
@@ -266,7 +273,6 @@ function displayDate(currentDate) {
 function displayHour(currentDate) {
     currentDate.setMinutes(00);
     currentDate.addHours(1);
-    hour = currentDate.getHours();
     currentDate = currentDate.toLocaleString("fr-FR", { timeZone: rcmail.env.timezone });
     hour = currentDate.split(' ');
     return hour[hour.length - 1].slice(0, 5);
@@ -275,4 +281,28 @@ function displayHour(currentDate) {
 Date.prototype.addHours = function (h) {
     this.setTime(this.getTime() + (h * 60 * 60 * 1000));
     return this;
+}
+
+function dateInférieurDialog() {
+    let html = '<h1 class="boxtitle">' + rcmail.gettext('title_futur', 'mel_envoi_differe') + '</h1><div id="envoidiffere-details" class="boxcontent"><div class="warning">' + rcmail.gettext('description_futur', 'mel_envoi_differe') + '</div></div>'
+
+    buttons = [{
+        text: rcmail.gettext('modify', 'mel_envoi_differe'),
+        'class': 'mainaction',
+        click: function () {
+            $(this).dialog('destroy');
+
+        }
+    },
+    {
+        text: rcmail.gettext('send_normally', 'mel_envoi_differe'),
+        click: function () {
+            if ($(window.parent.rcmail.gui_objects.messageform).find('input[name ="envoi_differe"]').length) {
+                parent.$('#envoi_differe').remove();
+            }
+            return rcmail.command('send', '', this, event)
+        }
+    }];
+
+    rcmail.show_popup_dialog(html, rcmail.gettext('buttontitle', 'mel_envoi_differe'), buttons, { width: 410, resizable: false, height: 250 })
 }
