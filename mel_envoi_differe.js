@@ -185,7 +185,6 @@ var init_time_autocomplete = function (elem, props) {
 rcube_webmail.prototype.display_mel_envoi_differe = function () {
 
     let currentDate = new Date();
-    currentDate = currentDate.toLocaleString("fr-FR", { timeZone: rcmail.env.timezone });
 
     let date = displayDate(currentDate);
     let heure = displayHour(currentDate);
@@ -257,13 +256,23 @@ rcube_webmail.prototype.display_mel_envoi_differe = function () {
 };
 
 
-function displayDate(currentDate) {    
+function displayDate(currentDate) {
+    currentDate = currentDate.toLocaleString("fr-FR", { timeZone: rcmail.env.timezone });
     date = currentDate.split(' ');
-    return date[0].slice(0,10);
+    return date[0].slice(0, 10);
 
 }
 
 function displayHour(currentDate) {
+    currentDate.setMinutes(00);
+    currentDate.addHours(1);
+    hour = currentDate.getHours();
+    currentDate = currentDate.toLocaleString("fr-FR", { timeZone: rcmail.env.timezone });
     hour = currentDate.split(' ');
     return hour[hour.length - 1].slice(0, 5);
+}
+
+Date.prototype.addHours = function (h) {
+    this.setTime(this.getTime() + (h * 60 * 60 * 1000));
+    return this;
 }
